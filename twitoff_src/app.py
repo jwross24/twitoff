@@ -12,6 +12,11 @@ def create_app():
     def index():
         rand_name = str(uuid.uuid4())
         rand_u = User(name=rand_name)
+
+        for i in range(3):
+            new_tweet = Tweet(text=f'Tweet #{i}')
+            rand_u.tweets.append(new_tweet)
+
         DB.session.add(rand_u)
         DB.session.commit()
         return "Index Page"
