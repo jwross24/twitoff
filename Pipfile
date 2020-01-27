@@ -8,6 +8,7 @@ flake8 = "*"
 
 [packages]
 flask = "*"
+flask-sqlalchemy = "*"
 
 [requires]
 python_version = "3.7"
