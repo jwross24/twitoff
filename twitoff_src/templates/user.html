@@ -1,19 +1,11 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>TwitOff - {{title}}</title>
-        <!-- CSS, keywords, metadata goes here -->
-    </head>
+{% extends "base.html" %}
 
-    <body>
-        <h1>TwitOff!</h1>
-
-        <h2>Tweets by @{{ name }}</h2>
-
-        <ul>
-            {% for tweet in tweets %}
-            <li>{{ tweet.text }}</li>
-            {% endfor %}
-        </ul>
-    </body>
-</html>
+{% block content %}
+    <div id="user-info">
+        <h2>User: {{ title }}</h2>
+        <p>{{ message }}</p>
+        {% for tweet in tweets %}
+            <li>{{ tweet.id }} -- {{ tweet.text }}</li>
+        {% endfor %}
+    </div>
+{% endblock %}

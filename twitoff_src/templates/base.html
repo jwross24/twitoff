@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>TwitOff - {{title}}</title>
+        <title>TwitOff - {{ title }}</title>
         <!-- CSS, keywords, metadata goes here -->
     </head>
 
     <body>
-        <h1>TwitOff!</h1>
-        <p>Content for TwitOff will go here...</p>
-
-        <ul>
-            {% for user in users %}
-            <li>{{ user.id }} - {{ user.name }}</li>
-            {% endfor %}
-        </ul>
+        {% block content %}
+            <h1>TwitOff!</h1>
+            <form action="/user" method="POST">
+            <input type="text" name="username" placeholder="User to add">
+            <input type="submit" value="Add user">
+            </form>
+        {% endblock %}
     </body>
 </html>
