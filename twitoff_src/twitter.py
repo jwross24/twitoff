@@ -10,4 +10,6 @@ TWITTER_AUTH.set_access_token(getenv('TWITTER_ACCESS_TOKEN'),
                               getenv('TWITTER_ACCESS_TOKEN_SECRET'))
 TWITTER = tweepy.API(TWITTER_AUTH)
 
-BASILICA = basilica.connection(getenv('BASILICA_KEY'))
+BASILICA = basilica.Connection(getenv('BASILICA_KEY'))
+
+# TODO - Write some useful functions!
