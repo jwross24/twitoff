@@ -10,6 +10,11 @@ def create_app():
 
     @app.route('/')
     def index():
+        users = User.query.all()
+        return render_template('base.html', title='Index Page', users=users)
+
+    @app.route('/hello')
+    def hello():
         rand_name = str(uuid.uuid4())
         rand_u = User(name=rand_name)
 
@@ -19,10 +24,7 @@ def create_app():
 
         DB.session.add(rand_u)
         DB.session.commit()
-        return render_template('base.html', title='Index Page')
 
-    @app.route('/hello')
-    def hello():
         return render_template('base.html', title='hello')
 
     return app
