@@ -1,3 +1,4 @@
+from os import getenv
 import uuid
 from flask import Flask, render_template
 from .models import DB, User, Tweet
@@ -5,9 +6,9 @@ from .models import DB, User, Tweet
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///my_db.sqlite'
+    app.config['SQLALCHEMY_DATABASE_URI'] = getenv('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['ENV'] = 'debug'  # TODO change before deploying
+    app.config['ENV'] = getenv('ENV')
     DB.init_app(app)
 
     @app.route('/')
