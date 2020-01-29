@@ -19,7 +19,7 @@ def create_app():
 
         DB.session.add(rand_u)
         DB.session.commit()
-        return "Index Page"
+        return render_template('base.html', title='Index Page')
 
     @app.route('/hello')
     def hello():
