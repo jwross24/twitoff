@@ -11,6 +11,7 @@ flask = "*"
 flask-sqlalchemy = "*"
 python-dotenv = "*"
 basilica = "*"
+tweepy = "*"
 
 [requires]
 python_version = "3.7"
