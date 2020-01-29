@@ -9,6 +9,8 @@ flake8 = "*"
 [packages]
 flask = "*"
 flask-sqlalchemy = "*"
+python-dotenv = "*"
+basilica = "*"
 
 [requires]
 python_version = "3.7"
