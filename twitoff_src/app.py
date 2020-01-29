@@ -6,6 +6,8 @@ from .models import DB, User, Tweet
 def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///my_db.sqlite'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['ENV'] = 'debug'  # TODO change before deploying
     DB.init_app(app)
 
     @app.route('/')
