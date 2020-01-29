@@ -1,7 +1,7 @@
 from os import getenv
-from flask import Flask, render_template
-from .models import DB, User, Tweet
-from .twitter import add_user_to_db
+from flask import Flask, render_template, request
+from .models import DB, User
+from .twitter import add_or_update_user
 
 
 def create_app():
@@ -13,24 +13,28 @@ def create_app():
 
     @app.route('/')
     def index():
-        users = User.query.all()
-        return render_template('base.html', title='Index Page', users=users)
+        DB.create_all()
+        return render_template('base.html', title='Index Page')
+
+    @app.route('/user', methods=['POST'])
+    @app.route('/user/<name>', methods=['GET'])
+    def user(name=None, message=''):
+        name = name or request.values['username']
+        try:
+            if request.method == "POST":
+                add_or_update_user(name)
+                message = f'User @{name} successfully added!'
+            tweets = User.query.filter(User.name == name).one().tweets
+        except Exception as e:
+            message = f'Error while trying to add user @{name}: {e}'
+            tweets = []
+        return render_template('user.html', title=name, message=message,
+                               tweets=tweets)
 
     @app.route('/reset')
     def reset():
         DB.drop_all()
         DB.create_all()
-        return render_template('base.html', title="DB Reset!", users=[])
-
-    @app.route('/user/<name>')
-    def show_user_tweets(name):
-        stmt = User.query.filter(User.name == name).first()
-        if stmt is None:
-            add_user_to_db(name)
-        db_user = User.query.filter(User.name == name).first()
-        db_user_id = db_user.id
-        db_tweets = Tweet.query.filter(Tweet.user_id == db_user_id)
-        return render_template('user.html', title=f'Tweets for @{name}',
-                               name=name, tweets=db_tweets)
+        return render_template('base.html', title="DB Reset!")
 
     return app
