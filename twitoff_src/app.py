@@ -82,8 +82,7 @@ def create_app():
         users = User.query.all()
         try:
             for user in users:
-                name = user.name
-                add_or_update_user(name)
+                add_or_update_user(user.name)
             message = "Cache cleared and all Tweets updated!"
             comparisons.clear()
         except Exception as e:
