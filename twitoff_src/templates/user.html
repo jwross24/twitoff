@@ -5,7 +5,7 @@
     <h2>User: {{ title }}</h2>
     <p>{{ message }}</p>
     {% for tweet in tweets %}
-    <li>{{ tweet.id }} -- {{ tweet.text }}</li>
+    <span class="stack"><li>{{ tweet.id }} -- {{ tweet.text }}</li></span>
     {% endfor %}
 </div>
 {% endblock %}
