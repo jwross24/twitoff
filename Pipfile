@@ -12,6 +12,8 @@ flask-sqlalchemy = "*"
 python-dotenv = "*"
 basilica = "*"
 tweepy = "*"
+numpy = "*"
+sklearn = "*"
 
 [requires]
 python_version = "3.7"
