@@ -3,7 +3,7 @@ from os import getenv
 from flask import Flask, render_template, request
 from .models import DB, User
 from .predict import predict_user
-from .twitter import add_or_update_user
+from .twitter import add_or_update_user, update_all_users
 
 
 def create_app():
@@ -79,15 +79,13 @@ def create_app():
 
     @app.route('/update')
     def update():
-        users = User.query.all()
         try:
-            for user in users:
-                add_or_update_user(user.name)
+            update_all_users()
             message = "Cache cleared and all Tweets updated!"
             comparisons.clear()
         except Exception as e:
             message = f"Error while updating Tweets: {e}"
         return render_template('base.html', title=message, message=message,
-                               users=users, comparisons=comparisons)
+                               users=User.query.all(), comparisons=comparisons)
 
     return app
