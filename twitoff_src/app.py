@@ -1,20 +1,33 @@
+"""Main application and routing logic for TwitOff."""
 from os import getenv
 from flask import Flask, render_template, request
 from .models import DB, User
+from .predict import predict_user
 from .twitter import add_or_update_user
 
 
 def create_app():
+    """Create and configure an instance of the Flask application."""
     app = Flask(__name__)
+
+    # Add config for database
     app.config['SQLALCHEMY_DATABASE_URI'] = getenv('DATABASE_URL')
+
+    # Stop tracking modifications on SQLAlchemy config
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['ENV'] = getenv('ENV')
+
+    # Let the database know about the app
     DB.init_app(app)
 
+    # Initialize recent comparisons in the cache
+    comparisons = []
+
     @app.route('/')
-    def index():
-        DB.create_all()
-        return render_template('base.html', title='Index Page')
+    def root():
+        users = User.query.all()
+        message = 'Home'
+        return render_template('base.html', title=message, message=message,
+                               users=users, comparisons=comparisons)
 
     @app.route('/user', methods=['POST'])
     @app.route('/user/<name>', methods=['GET'])
@@ -31,10 +44,50 @@ def create_app():
         return render_template('user.html', title=name, message=message,
                                tweets=tweets)
 
+    @app.route('/compare', methods=['POST'])
+    def compare(message=''):
+        users = User.query.all()
+        user1, user2 = sorted([request.values['user1'],
+                               request.values['user2']])
+        if user1 == user2:
+            message = "Cannot compare a user to themselves!"
+        elif request.values['tweet_text'] == '':
+            message = "Cannot compare an empty Tweet!"
+            return render_template('base.html', title=message, message=message,
+                                   users=users, comparisons=comparisons)
+        else:
+            prediction = predict_user(user1, user2,
+                                      request.values['tweet_text'])
+            message = (
+                f"\"{request.values['tweet_text']}\" is more likely to be "
+                f"said by @{user1 if prediction else user2} than "
+                f"@{user2 if prediction else user1}."
+            )
+            comparisons.append([user1, user2])
+        return render_template('prediction.html', title='Prediction',
+                               message=message)
+
     @app.route('/reset')
     def reset():
         DB.drop_all()
         DB.create_all()
-        return render_template('base.html', title="DB Reset!")
+        message = "Reset database!"
+        comparisons.clear()
+        return render_template('base.html', title=message, message=message,
+                               users=[], comparisons=comparisons)
+
+    @app.route('/update')
+    def update():
+        users = User.query.all()
+        try:
+            for user in users:
+                name = user.name
+                add_or_update_user(name)
+            message = "Cache cleared and all Tweets updated!"
+            comparisons.clear()
+        except Exception as e:
+            message = f"Error while updating Tweets: {e}"
+        return render_template('base.html', title=message, message=message,
+                               users=users, comparisons=comparisons)
 
     return app
