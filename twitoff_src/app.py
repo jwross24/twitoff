@@ -24,6 +24,7 @@ def create_app():
 
     @app.route('/')
     def root():
+        DB.create_all()
         users = User.query.all()
         message = 'Home'
         return render_template('base.html', title=message, message=message,
